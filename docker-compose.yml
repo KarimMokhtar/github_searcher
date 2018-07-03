@@ -1,0 +1,41 @@
+version: '3'
+services:
+  app:
+    build: .
+    entrypoint: /app/docker_entry.sh
+    command: rails s -p 3000
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/app
+    environment:
+      - ELASTICSEARCH_URL=elasticsearch
+      - DEV_DATABASE_HOST=db
+    depends_on:
+      - db
+      - elasticsearch
+    # these allow you to debug with byebug by attaching to the container
+    stdin_open: true
+    tty: true
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.3.0
+    volumes:
+      - .:/app
+    environment:
+      - cluster.name=docker-cluster
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - 9200:9200
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+  db:
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=monitor-dev
+      - POSTGRES_USER=root
+      
