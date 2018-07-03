@@ -1,2 +1,46 @@
-<h1>Pages#search</h1>
-<p>Find me in app/views/pages/search.html.erb</p>
+<div class="row">
+  <div class="col-md-6">
+    <h2>Pull Github Repos</h2>
+    <%= form_tag('/search', remote: true) do %>
+      <div class="form-group">
+        <label>Search Term</label>
+        <%= text_field_tag :search, nil, class: "form-control" %>
+      </div>
+      <div class="form-group">
+        <label>Language</label>
+        <%= select_tag "language", options_for_select([ "Ruby", "Javascript" ], "Ruby"), class: "form-control" %>
+      </div>
+      <%= submit_tag "Submit", class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+  <div class="col-md-6">
+    <h2>Search Local DB</h2>
+    <%= form_tag(root_path, method: :get) do %>
+        <div class="form-group">
+          <label>Search Term</label>
+          <%= text_field_tag :search, nil, class: "form-control" %>
+        </div>
+        <%= submit_tag "Submit", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
+<% if @repos.present? %>
+  <div class="row">
+    <% @repos.each do |r| %>
+      <div class="col-sm-3">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title"><%= r.name %></h5>
+            <h6 class="card-subtitle mb-2 text-muted"><%= r.owner %></h6>
+            <p class="card-text"><%= r.description %></p>
+            <%= link_to r.owner_url, class: "card-link" %>
+            <%= link_to r.html_url, class: "card-link" %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
